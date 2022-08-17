@@ -9,7 +9,8 @@ Description: Implementation of 'Distributed Dictionary Representation'
     fastText word vectors. Includes helper functions for validation and
     findng keywords.
 License: CC BY 4.0
-URL: https://github.com/thieled
+URL: https://github.com/thieled,
+    https://thieled.github.io/dictvectoR/
 BugReports: https://github.com/thieled/dictvectoR
 Depends: 
     R (>= 2.10)
