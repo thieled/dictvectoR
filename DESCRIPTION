@@ -1,16 +1,45 @@
 Package: dictvectoR
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: {{ Word vectors for dictionaries }}
+Version: 0.0.1
 Authors@R: 
-    person(given = "Daniel",
-           family = "Thiele",
-           role = c("aut", "cre"),
-           email = "daniel.thiele@univie.ac.at",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to
-    pick a license
+    person("Daniel", "Thiele", , "daniel.thiele@univie.ac.at", role = c("cre", "aut"))
+Description: Implementation of 'Distributed Dictionary Representation'
+    (Garten et al. 2018) using fastText word vecotrs. Calculates the
+    similarity between a dictionary and documents, both represented as
+    fastText word vectors. Includes helper functions for validation and
+    findng keywords.
+License: CC BY 4.0
+URL: https://github.com/thieled
+BugReports: https://github.com/thieled/dictvectoR
+Depends: 
+    R (>= 2.10)
+Imports: 
+    caret,
+    dplyr,
+    fastrtext,
+    magrittr,
+    Matrix,
+    pbapply,
+    proxyC,
+    purrr,
+    quanteda,
+    quanteda.textstats,
+    RcppAlgos,
+    stats,
+    stringi,
+    stringr,
+    tibble,
+    tidyr
+Suggests: 
+    ggplot2,
+    knitr,
+    rmarkdown
+VignetteBuilder: 
+    knitr
+Remotes: 
+    pommedeterresautee/fastrtext
+Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.1

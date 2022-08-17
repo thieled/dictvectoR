@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>from_text_to_measurement</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">from_text_to_measurement</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dictvectoR)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fastrtext)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(quanteda)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code></pre></div>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>This vignette guides you through the workflow described in Thiele
+(2022) in applying the ‘Distributed Dictionary Representation’ (DDR)
+Method (Garten et al., 2018) and introduces most functions of the
+dictvectoR package.</p>
+<p>The DDR method provides a continuous measurement of a concept in a
+dataset of documents. This measurement is obtained by calculating an
+average word vector representation of a concept dictionary, and
+representations of each document, and calculating the cosine similarity
+between those two vectors. For a detailed description, see Garten et
+al. (2018) and Thiele (2022).</p>
+</div>
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>The workflow described here starts from scratch, using only textual
+data as input, guides through steps for finding inductively a list of
+keywords, and demonstrates the evaluation and application.</p>
+<p>It requires a population dataset containing textual data and a
+hand-coded sample drawn from this dataset, annotated for the presence of
+a theoretical concept. We use the built-in dataset <code>tw_data</code>
+as population data and <code>tw_annot</code> as annotated sample.</p>
+<p>The vignette follows these steps:</p>
+<ol style="list-style-type: decimal">
+<li><p>Pre-process data</p></li>
+<li><p>Train fastText model</p></li>
+<li><p>Finding keywords</p></li>
+<li><p>Add multi-words</p></li>
+<li><p>Get F1 scores</p></li>
+<li><p>Drop similar terms</p></li>
+<li><p>Narrowing down by hand</p></li>
+<li><p>Get combinations of terms.</p></li>
+<li><p>Evaluate performance of combinations.</p></li>
+<li><p>Apply best performing dictionary.</p></li>
+<li><p>Face validity.</p></li>
+</ol>
+</div>
+<div id="pre-process-data" class="section level2">
+<h2>Pre-process data</h2>
+<p>First we load and pre-process the built in textual data.</p>
+<p><code>clean_text</code> cleans the text and is tailored to
+German-speaking texts on social media. If you are using text in other
+languages, you may want to adapt this helper-function to your own
+needs.</p>
+<p><code>prepare_train_data</code> prepares textual data for training a
+fastText model. It tokenizes longer documents into sentences, shuffles
+them, and calls <code>clean_text</code> with fixed settings.</p>
+<p>We first prepare a <code>texts</code> character vector for training
+the fastText model, and clean the text in <code>tw_data</code> and
+<code>tw_annot</code> for our later analyses.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare text data</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>texts <span class="ot">&lt;-</span> <span class="fu">prepare_train_data</span>(tw_data, <span class="at">text_field =</span> <span class="st">&quot;full_text&quot;</span>, <span class="at">seed =</span> <span class="dv">42</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean text in tw_data</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>tw_data <span class="sc">%&lt;&gt;%</span> <span class="fu">clean_text</span>(<span class="at">remove_stopwords =</span> T,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">text_field =</span> <span class="st">&quot;full_text&quot;</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean text in tw_annot</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>tw_annot <span class="sc">%&lt;&gt;%</span> <span class="fu">clean_text</span>(<span class="at">remove_stopwords =</span> T,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                         <span class="at">text_field =</span> <span class="st">&quot;full_text&quot;</span>)</span></code></pre></div>
+</div>
+<div id="train-fasttext-model" class="section level2">
+<h2>Train fastText model</h2>
+<p>Now, we train our own fastText model using
+<code>fastrtext::build_vectors</code>.</p>
+<p>A customized word vector model has the advantage that it maps the
+words and contexts that actually appear in the studied material. This is
+important here, as we will use the vocabulary of the model as starting
+point for our conceptual dictionary.</p>
+<p>The downside of training your own model is that it is expensive
+regarding memory and computation. I used a machine with a CPU @ 1.80GHz
+processor with 8 cores and 16 GB RAM. If you run into memory
+limitations, consider decreasing <code>dim</code>, the number of
+dimensions. Decreasing the number of <code>epochs</code> will speed up
+the learing process, and decreasing the <code>bucket</code> size will
+reduce the size of the resulting model. For details, see Bojanowski et
+al. (2017). To obtain a model with better quality, you also should
+consider increasing the size of textual data used for training. The
+example here is limited by the size of data that can be feasibly shipped
+in a R-package.</p>
+<p>Alternatively, you may consider using a pre-trained model from <a href="https://github.com/facebookresearch/fastText/blob/master/docs/crawl-vectors.md">here</a>.</p>
+<p>The code below creates a local folder <code>ft_model</code> in your
+user home directory, and saves the model as two files:
+<code>ft_model.bin</code> and <code>ft_model.vec</code>.</p>
+<p>(Note: The code below only runs if the model file does not exists.
+The training algorithm does not create perfectly identical word vector
+models, which can cause problems when re-running the vignette.)</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create local folder and set name for model</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">&quot;~/ft_model&quot;</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>model_file <span class="ot">&lt;-</span> <span class="fu">path.expand</span>(<span class="st">&quot;~/ft_model/ft_model&quot;</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Train a fasttext model using the twitter data (if model does not yet exist)</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(<span class="fu">paste0</span>(model_file, <span class="st">&quot;.bin&quot;</span>))) {</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  fastrtext<span class="sc">::</span><span class="fu">build_vectors</span>(texts, model_file, <span class="at">modeltype =</span> <span class="fu">c</span>(<span class="st">&quot;skipgram&quot;</span>),</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>                              <span class="at">dim =</span> <span class="dv">150</span>, <span class="at">epoch =</span> <span class="dv">10</span>, <span class="at">bucket =</span> <span class="fl">1e+6</span>,  <span class="at">lr =</span> <span class="fl">0.05</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>                              <span class="at">lrUpdateRate =</span> <span class="dv">100</span>, <span class="at">maxn =</span> <span class="dv">7</span>,  <span class="at">minn =</span> <span class="dv">4</span>, <span class="at">minCount =</span> <span class="dv">3</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                              <span class="at">t =</span> <span class="fl">1e-04</span>, <span class="at">thread =</span> <span class="dv">8</span>, <span class="at">ws=</span> <span class="dv">6</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
+<p>Let’s load the model and use a nearest-neighbor query to check if it
+works properly. ‘Spahn’ is the name of the former German minister of
+health:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load model:</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>model_path <span class="ot">&lt;-</span> <span class="fu">path.expand</span>(<span class="st">&quot;~/ft_model/ft_model.bin&quot;</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> fastrtext<span class="sc">::</span><span class="fu">load_model</span>(<span class="fu">paste0</span>(model_path))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Nearest-neigbor query:</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>fastrtext<span class="sc">::</span><span class="fu">get_nn</span>(model, <span class="st">&quot;spahn&quot;</span>, <span class="at">k=</span><span class="dv">8</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          spahns            jens   spahnversagen spahnruecktritt   maskenskandal </span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       0.9211217       0.7881474       0.7751120       0.7349917       0.7158434 </span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    maskenaffäre      skandalöse   ffpzweimasken </span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       0.6748365       0.6505284       0.6460720</span></span></code></pre></div>
+</div>
+<div id="finding-keywords" class="section level2">
+<h2>Finding keywords</h2>
+<p>Next, we want to use the fastText model and the manually annotated
+dataset to find a short dictionary for populist communication.</p>
+<p>First, we split the annotated data into a train and a test sample,
+using <code>caret::createDataPartition</code>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set seed</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># get index for splitting</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>train_id <span class="ot">&lt;-</span> caret<span class="sc">::</span><span class="fu">createDataPartition</span>(tw_annot<span class="sc">$</span>pop,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                                <span class="at">times =</span> <span class="dv">1</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                                <span class="at">p =</span> .<span class="dv">7</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                                <span class="at">list =</span> F)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># split annotated data</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>df_train <span class="ot">&lt;-</span> tw_annot <span class="sc">%&gt;%</span> <span class="fu">slice</span>(train_id) </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>df_test <span class="ot">&lt;-</span> tw_annot <span class="sc">%&gt;%</span> <span class="fu">slice</span>(<span class="sc">-</span>train_id) </span></code></pre></div>
+<p>As starting point for our dictionary, we use the vocabulary from the
+fastText model. We add the ID from the vocabulary and use
+<code>clean_text</code> to remove stopwords, and drop words of less than
+3 characters from this list:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Get vocabulary</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>vocab_df <span class="ot">&lt;-</span> fastrtext<span class="sc">::</span><span class="fu">get_dictionary</span>(model) <span class="sc">%&gt;%</span> <span class="fu">data.frame</span>(<span class="at">words =</span> .)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Get vocabulary ID</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>vocab_df<span class="sc">$</span>word_id <span class="ot">&lt;-</span> fastrtext<span class="sc">::</span><span class="fu">get_word_ids</span>(model, vocab_df<span class="sc">$</span>words)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># remove stopwords</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>vocab_df <span class="ot">&lt;-</span> <span class="fu">clean_text</span>(vocab_df, </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>                       <span class="at">text_field =</span> <span class="st">&quot;words&quot;</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                       <span class="at">remove_stopwords =</span> T) <span class="sc">%&gt;%</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>            <span class="fu">filter</span>(n_words <span class="sc">==</span> <span class="dv">1</span>,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>                   n_chars <span class="sc">&gt;</span> <span class="dv">2</span>) </span></code></pre></div>
+<p>Next, we want to narrow down that list. We identify words that are
+similar to the hand-coded corpus of populist Tweets but dissimilar to
+non-populist Tweets in <code>df_train</code> using
+<code>find_distinctive</code>.</p>
+<p><code>find_distinctive</code> computes an average representation of
+that subset of the annotated corpus in which populism was coded as
+present, as well as a representation of the negative counterpart,
+i.e. of the non-populist corpus. It then computes the cosine
+similarities of each word in a dataframe to these two corpora, and
+calculates the difference between these two similarity scores. This
+provides us with a quick and computationally inexpensive shortcut to
+find keywords that capture a specific concept, but nothing else.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get distinctive word scores</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>vocab_df <span class="ot">&lt;-</span> <span class="fu">find_distinctive</span>(df_train, </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">concept_field =</span> <span class="st">&quot;pop&quot;</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">text_field =</span> <span class="st">&quot;text&quot;</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                             <span class="at">word_df =</span> vocab_df,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                             <span class="at">word_field =</span> <span class="st">&quot;words&quot;</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                             <span class="at">model =</span> model)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>vocab_df <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(<span class="at">pop_distinctiveXpossim =</span> pop_distinctive<span class="sc">*</span>pop_possim) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>              <span class="fu">filter_ntile</span>(<span class="st">&quot;pop_distinctiveXpossim&quot;</span>, .<span class="dv">75</span>)</span></code></pre></div>
+<p>However, this method of narrowing down a list of keywords is a bit
+crude and not very informative for assessing how well a single word
+would perform when used in the DDR method.</p>
+<p>Hence, we want to get the actual F1 scores for each single word, when
+used as a one-word-dicitonary in the DDR method. Note that the DDR
+method returns the cosine similarity as a continuous measure,
+theoretically ranging from -1 to +1, while our manually annotated
+dataset was coded in a binary fashion (populist or non-populist).</p>
+<p>To solve this problem, the continuous measure is used as a
+independent variable in a logistic regression, predicting the manual
+binary coding. To obtain Recall, Precision and F1 scores,
+<code>dictvectoR</code> compares the binary predictions resulting from
+this regression with the manual coding. This is not a direct gold
+standard test but circumvents the problem of producing reliable granular
+codes manually (Grimmer &amp; Stewart, 2013, p. 275).</p>
+<p>Recall is an evaluation metric that indicates how well the automated
+measure captures all true positives, precision is indicates how well it
+captures only true positives, and F1 is a harmonic mean of both
+(Chinchor 1992).</p>
+<p><code>get_many_F1s</code> is a function that efficiently returns F1
+scores for a list of words or dictionaries, when used in as dictionary
+in the DDR method.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>vocab_df<span class="sc">$</span>popF1 <span class="ot">&lt;-</span> <span class="fu">get_many_F1s</span>(vocab_df<span class="sc">$</span>words,</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                              <span class="at">model =</span> model,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">df =</span> df_train,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                              <span class="at">reference =</span> <span class="st">&quot;pop&quot;</span>)</span></code></pre></div>
+<p>We’re only interested in the best-performing quartile, which we
+extract using the helper-function <code>filter_ntile</code>:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>top <span class="ot">&lt;-</span> vocab_df <span class="sc">%&gt;%</span>  </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>            <span class="fu">filter_ntile</span>(<span class="st">&quot;popF1&quot;</span>, .<span class="dv">75</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">filter</span>(popF1 <span class="sc">&gt;</span> <span class="dv">0</span>) </span></code></pre></div>
+</div>
+<div id="add-multi-words" class="section level2">
+<h2>Add multi-words</h2>
+<p>Some concepts are expressed rather in multi-word expressions than by
+single words. In our case, we suspect that people-centrism, one core
+dimension of populism, may involve such multiword expressions, for
+example by constructing an in-group with references to some ‘we’, e.g.,
+‘we taxpayers’, ‘our land’ etc.</p>
+<p>To find common multiword expressions, we use the population data
+(that is 75 percent of it to speed up the process a bit), and tokenize
+it using <code>quanteda::tokens</code>.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>tw_data <span class="sc">%&lt;&gt;%</span> <span class="fu">filter</span>(n_words <span class="sc">&gt;=</span> <span class="dv">2</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Use 75% sample</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>tw_split <span class="ot">&lt;-</span> tw_data <span class="sc">%&gt;%</span> <span class="fu">slice_sample</span>(<span class="at">prop =</span> .<span class="dv">75</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># tokenize</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>toks <span class="ot">&lt;-</span> quanteda<span class="sc">::</span><span class="fu">tokens</span>(tw_split<span class="sc">$</span>text)</span></code></pre></div>
+<p><code>add_multiwords</code> adds multiword expressions for a
+dataframe of single words and counts the occurences. Here we only look
+for multiwords in a 2-word-window (<code>level = 1</code>), which can be
+increased to a 3-words window (<code>level = 2</code>). This process
+might take two or three minutes.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>top <span class="ot">&lt;-</span> <span class="fu">add_multiwords</span>(top, </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">tokens =</span> toks, </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">min_hits =</span> <span class="dv">1</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">word_field =</span> <span class="st">&quot;words&quot;</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">levels =</span> <span class="dv">1</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Finding multi-word expressions in window = 1...&quot;</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Joining, by = &quot;from&quot;</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Adding missing count of original words:&quot;</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Counting word occurrences...&quot;</span></span></code></pre></div>
+<p>We want to narrow down this list again, filtering terms that occur
+only once. And we add a unique word_id by <code>add_word_id</code>.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>top <span class="sc">%&lt;&gt;%</span> <span class="fu">filter</span>(hits <span class="sc">&gt;</span> <span class="dv">1</span>) </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>top <span class="sc">%&lt;&gt;%</span> <span class="fu">add_word_id</span>()</span></code></pre></div>
+</div>
+<div id="get-f1-scores" class="section level2">
+<h2>Get F1 scores</h2>
+<p>Now, we also want to know the F1 scores for the new multiword terms,
+hence we just run <code>get_many_F1s</code> again.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>top<span class="sc">$</span>popF1 <span class="ot">&lt;-</span> <span class="fu">get_many_F1s</span>(top<span class="sc">$</span>words,</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">model =</span> model,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">df =</span> df_train,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">reference =</span> <span class="st">&quot;pop&quot;</span>)</span></code></pre></div>
+</div>
+<div id="drop-similar-terms" class="section level2">
+<h2>Drop similar terms</h2>
+<p>The resulting list of words is quite long and includes a lot of
+redundancy. Note that unlike in traditional dictionary approaches, the
+DDR method performs better if the input dictionary is very short and
+clear-cut. While redundancy is not a problem for traditional
+dictionaries, it may distort the performance of the dictionary in DDR
+(Garten et al., 2018).</p>
+<p><code>remove_similar_words</code> helps us to detect similar terms -
+by computing the pairwise cosine similarity between all words
+representations in a datafram. It can use two score as input to decide
+which words to drop: Here we use the F1 score calculated before
+<code>popF1</code>, and the number of occurences
+(<code>compare_hits = T</code>). We set the function to compare only
+terms that reach a smiliarity of 60% (<code>min_simil = .6</code>).
+<code>win_threshold</code> defines the share of all comparisons that a
+term must win in order to remain in the dataframe.</p>
+<p>Additionally, we drop terms that originate from the uni-word
+<code>afd</code>, the German populist party, since we want our populism
+measure to be rather non-partisan:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="do">## narrow down</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>top_subs <span class="ot">&lt;-</span> top <span class="sc">%&gt;%</span> <span class="fu">remove_similar_words</span>(model, </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">compare_by =</span> <span class="st">&quot;popF1&quot;</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">compare_hits =</span> T, </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">min_simil =</span> .<span class="dv">6</span>, </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">win_threshold =</span> .<span class="dv">65</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">filter</span>(<span class="sc">!</span>from <span class="sc">==</span> <span class="st">&quot;afd&quot;</span>) </span></code></pre></div>
+</div>
+<div id="narrowing-down-by-hand" class="section level2">
+<h2>Narrowing down by hand</h2>
+<p>Let’s have a look at all terms found so far. (We won’t print all 400
+or so terms here but only the top 50)</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>top_subs <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(popF1)) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(words) <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">50</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] &quot;panzer&quot;                      &quot;wahn&quot;                       </span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [3] &quot;verrechnet&quot;                  &quot;deutschen steuerzahler&quot;     </span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [5] &quot;wand&quot;                        &quot;irrweg&quot;                     </span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [7] &quot;rücken wand&quot;                 &quot;verrückt&quot;                   </span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [9] &quot;skandalösen&quot;                 &quot;teures&quot;                     </span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [11] &quot;deutschen mittelstand&quot;       &quot;daimler vw&quot;                 </span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [13] &quot;mdb nimmt&quot;                   &quot;igmetall&quot;                   </span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [15] &quot;gaga&quot;                        &quot;teure&quot;                      </span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [17] &quot;skandalöse&quot;                  &quot;gender gaga&quot;                </span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [19] &quot;steuergeldverschwendung&quot;     &quot;skandalös&quot;                  </span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [21] &quot;maskenskandal&quot;               &quot;irrsinnige&quot;                 </span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [23] &quot;betreibt&quot;                    &quot;rechnet&quot;                    </span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [25] &quot;vernichten&quot;                  &quot;vernichtet&quot;                 </span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [27] &quot;autofahrer&quot;                  &quot;existenzen vernichtet&quot;      </span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [29] &quot;deutschland groko&quot;           &quot;knickt&quot;                     </span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [31] &quot;lobbyregister&quot;               &quot;vdk&quot;                        </span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [33] &quot;dax&quot;                         &quot;fachkräfte&quot;                 </span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [35] &quot;spahn warnt&quot;                 &quot;abgasnorm&quot;                  </span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [37] &quot;kette&quot;                       &quot;deckmantel&quot;                 </span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [39] &quot;deckt&quot;                       &quot;diesel fahrverbote&quot;         </span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [41] &quot;kurzstreckenflüge verbieten&quot; &quot;steuerzahler&quot;               </span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [43] &quot;mdb groko&quot;                   &quot;mittels&quot;                    </span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [45] &quot;autofahren&quot;                  &quot;schamlos&quot;                   </span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [47] &quot;unternimmt&quot;                  &quot;staatshaushalt&quot;             </span></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [49] &quot;einwanderungsministerium&quot;    &quot;linie rechnen&quot;</span></span></code></pre></div>
+<p>This list of keywors is still quite long. It includes many terms that
+seem theoretically plausible, but also many words that obviously are
+either too specific, or seem out of place.</p>
+<p>Since the next steps involve combinatorics for finding a good
+combination of keywords, we want to narrow down the list of words as
+drastically as possible.</p>
+<p>For theoretical reasons, we decided to group the found words in three
+categories that reflect different aspects of populist communication:
+Terms that reflect ‘elites’, terms that reflect ‘the people’, and words
+that relate those two groups.</p>
+<p>From the 400 or so terms, we hand-picked five distinctive terms for
+each of these categories. This mode of selection is theory-driven and
+different from the inductive logic used so far. You may want to opt for
+different modes of selection, depending on your task and the quality of
+inductively generated keywords. Here are the words picked for further
+processing:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>elites <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;altparteien&quot;</span>, </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;lobbyisten&quot;</span>, </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;merkel co&quot;</span>, </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;plänen bundesregierung&quot;</span>, </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;zwangsgebühr&quot;</span> </span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>people <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;arbeitnehmern&quot;</span>,  </span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;existenzen&quot;</span>, </span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;deutschen&quot;</span>, </span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;deutschen mittelstand&quot;</span>, </span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;deutschen steuerzahler&quot;</span> </span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>relation <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;entlarven&quot;</span>, </span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;schamlos&quot;</span>, </span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;verrückt&quot;</span>,</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;wahn&quot;</span>, </span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;steuergeldverschwendung&quot;</span> </span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>We use this hand-picked list of words to create a shortlist and add a
+variable that indicates the category:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>top_elites <span class="ot">&lt;-</span> top_subs <span class="sc">%&gt;%</span> <span class="fu">filter</span>(words <span class="sc">%in%</span> elites) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">cat =</span> <span class="st">&quot;elites&quot;</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>top_people <span class="ot">&lt;-</span> top_subs <span class="sc">%&gt;%</span> <span class="fu">filter</span>(words <span class="sc">%in%</span> people) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">cat =</span> <span class="st">&quot;people&quot;</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>top_relation <span class="ot">&lt;-</span> top_subs <span class="sc">%&gt;%</span> <span class="fu">filter</span>(words <span class="sc">%in%</span> relation) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">cat =</span> <span class="st">&quot;relation&quot;</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>shortlist <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(top_elites, top_people, top_relation) </span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>shortlist<span class="sc">$</span>cat <span class="sc">%&lt;&gt;%</span> <span class="fu">factor</span>() </span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>shortlist<span class="sc">$</span>cat <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   elites   people relation </span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        5        5        5</span></span></code></pre></div>
+</div>
+<div id="get-combinations" class="section level2">
+<h2>Get combinations</h2>
+<p>We now use this shortlist to get all possible combinations of various
+length per category, and all possible combinations of these
+combinations.</p>
+<p><code>get_combis</code> helps us finding these combinations, and
+provides a useful random sampling mechanism that limits the number of
+returned combinations: Setting a <code>limit</code>, limits the number
+of combinations of a given length returned per dimension.</p>
+<p>For example, consider that you have a shortlist of words with 2
+categories A and B, with 10 words per category, and want find
+combinations of words that include at least 3 words per category
+(<code>min_per_dim = 3</code>) and maximum 10 words overall
+(<code>max_overall = 10</code>), i.e. max. 5 words per dimension.</p>
+<p>Then you would have 120 possible combinations of length 3 for both
+category A and B:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">11</span><span class="sc">:</span><span class="dv">20</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">choose</span>(<span class="dv">10</span>, <span class="dv">3</span>)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 120</span></span></code></pre></div>
+<p>However, you also get 210 possible combinations of length 4, and 252
+combinations of length 5 per category:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">choose</span>(<span class="dv">10</span>, <span class="dv">4</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 210</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">choose</span>(<span class="dv">10</span>, <span class="dv">5</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 252</span></span></code></pre></div>
+<p>If you want to get all possible combinations of these combinations,
+the number increases really quickly, as we can see below. The first two
+lines return all possible cominations for A and B of varying length
+between 3 and 5. <code>expand_grid</code> returns the combinations of
+combinations:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>A_c <span class="ot">&lt;-</span> <span class="fu">do.call</span>(<span class="st">&quot;c&quot;</span>, <span class="fu">lapply</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>, <span class="cf">function</span>(i) <span class="fu">combn</span>(A, i, <span class="at">FUN =</span> list)))</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>B_c <span class="ot">&lt;-</span> <span class="fu">do.call</span>(<span class="st">&quot;c&quot;</span>, <span class="fu">lapply</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>, <span class="cf">function</span>(i) <span class="fu">combn</span>(B, i, <span class="at">FUN =</span> list)))</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">expand.grid</span>(A_c, B_c)  <span class="sc">%&gt;%</span> <span class="fu">nrow</span>()</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 338724</span></span></code></pre></div>
+<p>Setting the <code>limit</code> to, let’s say 30, in
+<code>get_combis</code> radomly draws only 30 possible combinations of
+one length per category.</p>
+<p>In our case, this limit is not really necessary, as we only have 5
+words per category and want lengths between 3 and 4. The maximum number
+of combinations per length &amp; category is 10:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">max</span>(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">choose</span>(<span class="dv">5</span>, <span class="dv">3</span>),</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">choose</span>(<span class="dv">5</span>, <span class="dv">4</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 10</span></span></code></pre></div>
+<p>Although unnecessary in our case, we specify a <code>limit</code>
+(that won’t drop any combinations) - just for demonstration. Setting
+<code>seed</code> makes your results reproducible, the default is
+<code>1</code>. <code>get_cobmis</code> returns a data.frame that
+includes a column where you’re settings are stored, in case you want to
+come back and draw a different round of combinations.</p>
+<p>So, let’s get all combinations for our list of words:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>combis_rd <span class="ot">&lt;-</span> <span class="fu">get_combis</span>(shortlist,</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">dims =</span> <span class="st">&quot;cat&quot;</span>,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">min_per_dim =</span> <span class="dv">3</span>,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">max_overall =</span> <span class="dv">12</span>,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">limit =</span> <span class="dv">10</span>,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">seed =</span> <span class="dv">42</span>)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Joining, by = &quot;rowid&quot;</span></span></code></pre></div>
+</div>
+<div id="evaluate-combinations" class="section level2">
+<h2>Evaluate combinations</h2>
+<p>Now we want to get Recall, Precision, and F1 scores for all of the
+3,375 combinations. <code>get_many_RPFs</code> is made for this
+task:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>combis_df <span class="ot">&lt;-</span> <span class="fu">get_many_RPFs</span>(<span class="at">keyword_df =</span> combis_rd,</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                             <span class="at">keyword_field =</span> <span class="st">&quot;combs_split&quot;</span>,</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                             <span class="at">model =</span> model, </span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">text_df =</span> df_train,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                             <span class="at">reference =</span> <span class="st">&quot;pop&quot;</span>, </span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>                             <span class="at">text_field =</span> <span class="st">&quot;text&quot;</span>)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Joining, by = &quot;rowid&quot;</span></span></code></pre></div>
+<p>Now, let’s pick the best performing short dictionary:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pick dictionary that maximizes F1:</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>dict  <span class="ot">&lt;-</span> combis_df <span class="sc">%&gt;%</span> </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">filter</span>(F1 <span class="sc">==</span> <span class="fu">max</span>(F1)) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>          <span class="fu">pull</span>(combs_split) <span class="sc">%&gt;%</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>          <span class="fu">unlist</span>()</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Let&#39;s see:</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>dict</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] &quot;altparteien&quot;             &quot;arbeitnehmern&quot;          </span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [3] &quot;deutschen&quot;               &quot;deutschen steuerzahler&quot; </span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [5] &quot;entlarven&quot;               &quot;merkel co&quot;              </span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [7] &quot;plänen bundesregierung&quot;  &quot;steuergeldverschwendung&quot;</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [9] &quot;verrückt&quot;                &quot;wahn&quot;</span></span></code></pre></div>
+<p>These 10 words cover various aspects of populist communication and
+are highly context-specific. However, this is not the place to dive into
+theoretical discussions.</p>
+<p>Let’s check the performance of the dictionary instead. On the
+training sample, this dictionary reaches an F1 of .56, which is not
+great, but OK.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>combis_df<span class="sc">$</span>F1 <span class="sc">%&gt;%</span> <span class="fu">max</span>()  </span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.5568627</span></span></code></pre></div>
+<p>Let’s check the F1 score when applied on the test sample:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Performance for test_df</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_F1</span>(df_test, dict, model, <span class="st">&#39;pop&#39;</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.5544554</span></span></code></pre></div>
+<p>The short dictionary reaches a F1 of .55 in the test sample, which is
+almost par with the result for the train data. Drawing on this
+evaluation, we have some reason to assume that we avoided overfitting
+the dictionary to the training data. We may therefore assume that this
+measurement can at least approximately capture populist communication in
+our population dataset. It does not mean that this short dictionary
+would perform equally well in different contexts, e.g., in
+user-generated material, or in other timeframes.</p>
+<p>For some special applications, you might be intereste how your DDR
+measurement perform for different subsets of your data, e.g., if you are
+using a translated corpus originating from various languages. F1 scores
+for grouped subsets of a text dataframe, can be obtained by
+<code>get_many_F1s_by_group</code>.</p>
+<p>In our case, we might be interested how the dictionaries perform for
+different political parties. Here, we demonstrate the function using the
+top 5% of short dictionaries. Since the populist communication in our
+annotated sample is indeed mainly concentrated in the parties AfD and
+Die Linke, we calculate the 3rd root of the product of the overall F1
+score and the two party-specific F1-scores to pick the best performing,
+balanced dictionary:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>combis_subset <span class="ot">&lt;-</span> combis_df <span class="sc">%&gt;%</span> <span class="fu">filter_ntile</span>(<span class="st">&quot;F1&quot;</span>, .<span class="dv">95</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>combis_df_by_group <span class="ot">&lt;-</span>  <span class="fu">get_many_F1s_by_group</span>(<span class="at">keyword_df =</span> combis_subset,</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">keyword_field =</span> <span class="st">&quot;combs_split&quot;</span>,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">id =</span> <span class="st">&quot;id&quot;</span>,</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">model =</span> model,</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">text_df =</span> df_train,</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">group_field =</span> <span class="st">&quot;party&quot;</span>,</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">reference =</span> <span class="st">&#39;pop&#39;</span>)</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Joining, by = &quot;id&quot;</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute 3rd root product of 3 F1s:</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>combis_df_by_group <span class="sc">%&lt;&gt;%</span> <span class="fu">mutate</span>(<span class="at">F1_balanced =</span> (F1<span class="sc">*</span>F1_AfD<span class="sc">*</span>F1_Linke)<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>))</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>dict_bal  <span class="ot">&lt;-</span> combis_df_by_group <span class="sc">%&gt;%</span> </span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">filter</span>(F1_balanced <span class="sc">==</span> <span class="fu">max</span>(F1_balanced)) <span class="sc">%&gt;%</span> </span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">pull</span>(combs_split) <span class="sc">%&gt;%</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">unlist</span>()</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>dict_bal</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] &quot;arbeitnehmern&quot;           &quot;deutschen&quot;              </span></span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [3] &quot;deutschen mittelstand&quot;   &quot;entlarven&quot;              </span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [5] &quot;existenzen&quot;              &quot;lobbyisten&quot;             </span></span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [7] &quot;merkel co&quot;               &quot;plänen bundesregierung&quot; </span></span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [9] &quot;steuergeldverschwendung&quot; &quot;verrückt&quot;               </span></span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [11] &quot;wahn&quot;</span></span></code></pre></div>
+<p>Let’s check the performance of this ‘balanced’ dictionary on the test
+data:</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_F1</span>(df_test, dict_bal, model, <span class="st">&#39;pop&#39;</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.4893617</span></span></code></pre></div>
+<p>As this decreased the performance in the test data, we stick with the
+dictionary picked before.</p>
+</div>
+<div id="apply-ddr" class="section level2">
+<h2>Apply DDR</h2>
+<p>Now, we want to apply the best performing dictionary to the datasets.
+We apply it on both, the population data <code>tw_data</code> and the
+annotated data <code>tw_annot</code>, using the core function of this
+package <code>cossim2dict</code>. We fill in missing values, which
+occure sometimes if text cleaning empties the text field by the mean
+minus 1 SD:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>tw_annot<span class="sc">$</span>pop_ddr <span class="ot">&lt;-</span> <span class="fu">cossim2dict</span>(<span class="at">df =</span> tw_annot,</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">dictionary =</span> dict,</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>                               <span class="at">model =</span> model,</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>                               <span class="at">replace_na =</span> <span class="st">&#39;mean-sd&#39;</span>)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>tw_data<span class="sc">$</span>pop_ddr <span class="ot">&lt;-</span> <span class="fu">cossim2dict</span>(<span class="at">df =</span> tw_data,</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>                               <span class="at">dictionary =</span> dict,</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>                               <span class="at">model =</span> model,</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>                               <span class="at">replace_na =</span> <span class="st">&#39;mean-sd&#39;</span>)</span></code></pre></div>
+</div>
+<div id="face-validity" class="section level2">
+<h2>Face validity</h2>
+<p>Now, lets inspect the top 3 populist Tweets in our population
+data:</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>tw_data <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(pop_ddr)) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(full_text) <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;#AfD-Fraktionsvize @PeterFelser hat den linksideologischen Hype um neue Geschlechter als „teures #Gendergaga“ kritisiert: \&quot;Riesen Aufwand für Nichts! Gender-Gaga auf Kosten der #Steuerzahler ersatzlos streichen!\&quot; #Bundestag https://t.co/paIVvtTkfg&quot;                                 </span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2] &quot;+++EU auf den Müllhaufen der Wirtschaftsgeschichte werfen!+++\n#AfD-MdB Hansjörg Müller @MdB_Mueller_AfD erklärt: \&quot;Brüssel stranguliert mit sinnloser Bürokratie deutsche Unternehmen zu Tode!\&quot; #Bundestag\nhttps://t.co/m4WKyMweog&quot;                                                     </span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [3] &quot;+++Stoppen Sie diese irrsinnige Verbotspolitik!+++\n#AfD-MdB @DirkSpaniel warnt vor den katastrophalen Folgen der geplanten Euro 7 Abgasnorm der EU. Hunderttausende Arbeitsplätze stehen auf dem Spiel. Das Verbot des Verbrennungsmotors muss verhindert werden! https://t.co/OO09woK3MT&quot;</span></span></code></pre></div>
+<p>These examples include Tweets from the AfD directed against
+‘genderism’ and leftist ideology, directed against the EU, and directed
+against climate politics. Judging from face validity these Tweets are
+clearly populist.</p>
+<p>Let’s inspect the lower end of the spectrum:</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>tw_data <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(pop_ddr)) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(full_text) <span class="sc">%&gt;%</span> <span class="fu">tail</span>(<span class="dv">3</span>)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;@KristinaFassler @KenzaAbbou @KaiDiekmann @katha_krentz @lukizzl @SophiaRoediger @TijenOnaran @cihansugur @anja_hendel @esinekalos @froileinmueller @biancareitz_ @wohlrapp @pmk997 @swissmadame @ChrisBoesenberg Gute Besserung ❤️‍🩹&quot;</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2] &quot;@ralphruthe @marga_owski Gute Besserung!&quot;                                                                                                                                                                                            </span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [3] &quot;@grischdjane @doktordab @MarkusBlume So ein Käse Käse ;-)&quot;</span></span></code></pre></div>
+<p>The least populist Tweets - according to our measurement here -
+include quite harmless “get well soon” wishes.</p>
+</div>
+<div id="plots" class="section level2">
+<h2>Plots</h2>
+<p>Let’s use the DDR measurements for some plots. We start with plotting
+the gradual populism measurement against the human, binary coding for
+populism, using the complete annotated dataset:</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>tw_annot<span class="sc">$</span>pop <span class="sc">%&lt;&gt;%</span> <span class="fu">factor</span>() </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tw_annot, <span class="fu">aes</span>(<span class="at">x =</span> pop, <span class="at">y =</span> pop_ddr, <span class="at">color =</span> pop)) <span class="sc">+</span> </span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> .<span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&quot;Populism (DDR)&quot;</span>, </span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Populism (Human coding)&quot;</span>)<span class="sc">+</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title.x =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="dv">0</span>),</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" width="75%" /></p>
+<p>We see that some non-populist Tweets score higher than they should,
+but the mean populism score for both groups is clearly different - as
+indicated by the boxplots.</p>
+<p>We can also use the parallel-coded 90 Tweets to get some visual
+evaluation for the gradual measurement returned by the DDR method.
+‘Populism’ in the annotated dataset was coded as two distinct
+categories, anti-elitism and people-centrism. To obtain some gradual
+score, we just calculate the sum of the coding of these two categories
+by the two coders, resulting in a score that ranges from 0 to 4. We plot
+it against the DDR score:</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>parallel_df <span class="ot">&lt;-</span> tw_annot <span class="sc">%&gt;%</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(rel_test <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pop_cum =</span> ppc_A <span class="sc">+</span> ppc_B <span class="sc">+</span> ane_A <span class="sc">+</span> ane_B)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(parallel_df, <span class="fu">aes</span>(<span class="at">x =</span> pop_ddr, <span class="at">y =</span> pop_cum))<span class="sc">+</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">height =</span> .<span class="dv">1</span>,</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">width =</span> <span class="dv">0</span>)<span class="sc">+</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> T)<span class="sc">+</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">4</span>))</span></code></pre></div>
+<p><img src="data:image/png;base64,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" width="75%" /></p>
+<p>The two (semi-)continuous scores have a Pearson’s r correlation of
+.53:</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(parallel_df<span class="sc">$</span>pop_cum, parallel_df<span class="sc">$</span>pop_ddr)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.5324504</span></span></code></pre></div>
+<p>Finally, to assess external validity of our measurement, we compare
+it on a aggregated level to the POPPA expert rating of political parties
+(Meijers and Zaslove, 2020). This expert survey provides a gradual
+rating of populism for political parties. The score is already merged to
+the <code>tw_data</code>.</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># aggregate on party level</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>tw_party <span class="ot">&lt;-</span> tw_data <span class="sc">%&gt;%</span> </span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>              <span class="fu">group_by</span>(party) <span class="sc">%&gt;%</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>              <span class="fu">summarise</span>(<span class="at">pop_ddr =</span> <span class="fu">mean</span>(pop_ddr),</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">poppa_populism =</span> <span class="fu">mean</span>(poppa_populism)) </span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tw_party, <span class="fu">aes</span>(<span class="at">x =</span> pop_ddr, <span class="at">y =</span> poppa_populism, <span class="at">label=</span>party))<span class="sc">+</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">na.rm =</span> T)<span class="sc">+</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm)<span class="sc">+</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">hjust=</span><span class="dv">0</span>, <span class="at">vjust=</span><span class="dv">0</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" width="75%" /></p>
+<p>On an aggregate level, the expert ratings of populism for the
+political parties align very well with the DDR score for populist
+communication.</p>
+<p>Indeed, both scores are strongly correlated:</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(tw_party<span class="sc">$</span>pop_ddr, tw_party<span class="sc">$</span>poppa_populism)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.8763463</span></span></code></pre></div>
+</div>
+<div id="simple-visual-analysis" class="section level2">
+<h2>Simple visual analysis</h2>
+<p>The resulting DDR scores could be used, e.g. to investigate temporal
+shifts in the strategies of the political parties. Below we plot the
+mean populism score per party over time. We see that the ‘AfD’ clearly
+is the most populist party, followed by ‘Die Linke’, which is
+theoretically absolutely plausible. We not a sudden decrease of populist
+communication for ‘Die Linke’ and other parties in August 2020, which
+could be driven by the growth of a populist coronasceptic movement -
+which was opposed by all parties but the ‘AfD’. At the end of the
+timeframe, shortly before the German General Elections in September
+2021, the level of populism rises notably for the ‘AfD’.</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>tw_data <span class="sc">%&gt;%</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">day =</span> <span class="fu">as.Date</span>(created_at)) <span class="sc">%&gt;%</span> </span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(party, day) <span class="sc">%&gt;%</span> </span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">pop_ddr =</span> <span class="fu">mean</span>(pop_ddr)) <span class="sc">%&gt;%</span> </span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> day, <span class="at">y =</span> pop_ddr, <span class="at">color =</span> party))<span class="sc">+</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&#39;loess&#39;</span>, <span class="at">span =</span> <span class="fl">0.15</span>, <span class="at">se =</span> F)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" width="75%" /></p>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>Summing up, the dictionary and measurement produced in this vignette
+does a good job in differentiating levels of populism in the
+communication of political parties, on an aggregate level. It also
+produces somehow plausible results when compared to the cumulative
+coding of the two coders. And it performs OK when compared directly to
+the binary hand-codings of Tweets.</p>
+<p>However, there is much room for improvement. Here are some possible
+ways to improve the measurement:</p>
+<ul>
+<li><p>Improve the fastText model by using a much larger training
+dataset. Pre-trained models are trained on millions of sentences, for
+example. However, unlike those generic models, you may want stick with
+material from the specific context (here: communication of political
+elites).</p></li>
+<li><p>Improve the fastText model by parameter tuning. E.g., donsider
+increasing the number of dimensions (<code>dim</code>, 100-300 are
+popular choices), increasing the number of epochs (<code>epoch</code>),
+play around with different ngram lengths (<code>minn</code>,
+<code>maxn</code>), and play around with the window size for context
+(<code>ws</code>). You can use <code>get_nn</code> for face validity
+plausibility checks, or use a more formal test (e.g., analogy tests) to
+determine the quality of your fastText model.</p></li>
+<li><p>Use a larger annotated sample for finding good keywords and
+evaluating their quality. The larger this sample, the lower the risk of
+overfitting your short dictionary to a too specific context.</p></li>
+<li><p>Play around with different thresholds in
+<code>remove_similar_terms</code>. This function can have a quite
+dramatic effect of the words included or excluded.</p></li>
+<li><p>Think of a theory-driven, explicit coding-scheme for hand-picking
+words from the narrowed down subset.</p></li>
+<li><p>Allow for more combinations per length and dimension
+(<code>limit</code>) in <code>get_combis</code>.</p></li>
+</ul>
+<p>Good luck!</p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<p>Bojanowski, P., Grave, E., Joulin, A., &amp; Mikolov, T. (2017).
+Enriching Word Vectors with Subword Information. ArXiv:1607.04606 [Cs].
+Retrieved from <a href="http://arxiv.org/abs/1607.04606">http://arxiv.org/abs/1607.04606</a></p>
+<p>Chinchor, N. (1992). MUC-4 evaluation metrics. Proceedings of the 4th
+Conference on Message Understanding, 22–29. USA: Association for
+Computational Linguistics. <a href="https://doi.org/10.3115/1072064.1072067">https://doi.org/10.3115/1072064.1072067</a></p>
+<p>Garten, J., Hoover, J., Johnson, K. M., Boghrati, R., Iskiwitch, C.,
+&amp; Dehghani, M. (2018). Dictionaries and distributions: Combining
+expert knowledge and large scale textual data content analysis. Behavior
+Research Methods, 50(1), 344–361. <a href="https://doi.org/10.3758/s13428-017-0875-9">https://doi.org/10.3758/s13428-017-0875-9</a></p>
+<p>Grimmer, J., &amp; Stewart, B. M. (2013). Text as data: The promise
+and pitfalls of automatic content analysis methods for political texts.
+Political Analysis, 21(3), 267–297. <a href="https://doi.org/10.1093/pan/mps028">https://doi.org/10.1093/pan/mps028</a></p>
+<p>Meijers, M., &amp; Zaslove, A. (2020). Populism and Political Parties
+Expert Survey 2018 (POPPA) (Data set). Harvard Dataverse. <a href="https://doi.org/10.7910/DVN/8NEL7B">https://doi.org/10.7910/DVN/8NEL7B</a></p>
+<p>Thiele, D. (2022, June 27). “Don’t believe the media’s pandemic
+propaganda!!” How Covid-19 affected populist Facebook user comments in
+seven European countries. Presented at the ICA Regional Conference 2022.
+Computational Communication Research in Central and Eastern Europe,
+Helsinki, Finland. Retrieved from <a href="https://ucloud.univie.ac.at/index.php/s/PzGzChXroLCXrtt">https://ucloud.univie.ac.at/index.php/s/PzGzChXroLCXrtt</a></p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

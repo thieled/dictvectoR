@@ -1,2 +1,6 @@
 ^dictvectoR\.Rproj$
 ^\.Rproj\.user$
+^data-raw$
+^CODE_OF_CONDUCT\.md$
+^README\.Rmd$
+^LICENSE\.md$
