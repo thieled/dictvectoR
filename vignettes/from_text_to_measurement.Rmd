@@ -118,7 +118,7 @@ The code below creates a local folder `ft_model` in your user home directory, an
 
 (Note: The code below only runs if the model file does not exists. The training algorithm does not create perfectly identical word vector models, which can cause problems when re-running the vignette.)
 
-```{r train model}
+```{r train model, message=FALSE, results='hide'}
 # Create local folder and set name for model
 dir.create("~/ft_model", showWarnings = FALSE)
 model_file <- path.expand("~/ft_model/ft_model")
