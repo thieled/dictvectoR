@@ -4,6 +4,9 @@
 # dictvectoR <img src="man/figures/logo.png" align="right" height="200" />
 
 <!-- badges: start -->
+
+[![DOI](https://zenodo.org/badge/438666102.svg)](https://zenodo.org/badge/latestdoi/438666102)
+[![R-CMD-check](https://github.com/thieled/dictvectoR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/thieled/dictvectoR/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 dictvectoR implements the “Distributed Dictionary Representation” (DDR)
@@ -130,9 +133,9 @@ tw_data %>%
   dplyr::arrange(desc(pop_ddr)) %>%
   head(3) %>%
   dplyr::pull(full_text)
-#> [1] "Ob Deutschkurs oder Job - die Bilanz von \"geflüchteten\" #Frauen stellt sich nach fünf Jahren in #Deutschland ernüchternd dar. Merkels Fachkräfte-Märchen zerschellt krachend an der Realität - - der deutsche #Sozialstaat machts möglich! #AfD #Migration https://t.co/oTrP2ewkpv https://t.co/kr4PPh2a1z"
-#> [2] "#UNO finanziert #Islamisten-#Hass mit unserem #Steuergeld!\n\nSeit Jahrzehnten haben die Vereinten Nationen ein massives Problem mit #Islamismus und islamischem #Antisemitismus in den eigenen Reihen – und es wird nicht besser.\n\nhttps://t.co/G9MMaQrqIY https://t.co/fzjQ8Ty2qq"                       
-#> [3] "Seit es das #Grundgesetz gibt, hatte #Deutschland keinen Regierungschef, der deutsche Interessen so schlecht vertritt und den Ausverkauf des deutschen Volksvermögens und der Staatsfinanzen so schamlos betreibt, wie Angela #Merkel! #AfD #Corona #Covid19 https://t.co/qGKYUgqcSe"
+#> [1] "Ein Finanzminister #Scholz, der sein Land verkauft, hat im Kanzleramt nichts verloren. Nach #Merkel muss der Neuanfang folgen und zu dem gehört zuvörderst eine Finanzpolitik im Sinne 🇩🇪, ohne Schuldenunion und schwarzes Transferloch Richtung Brüssel! #AfD https://t.co/JWY4QwgPAS https://t.co/h58SWQcv0b"
+#> [2] "Korruption, Vetternwirtschaft, Geldgier, Amtsmissbrauch. Bei #Chebli, ihrem Mann Nizar Maarouf und deren “Clan“ ist alles dabei. Geld verdienen zulasten von Berlins Kranken. Man muss diesen schwarzen und rotrotgrünen Sumpf dringend trockenlegen. #Vivantes https://t.co/zKLd0HrVVE"                        
+#> [3] "Merkel macht Rechtsbruch zum politischen Prinzip! Die #GroKo glänzt durch Totalversagen. Von Wirtschaft über Klima und Justiz bis hin zu Flüchtlingspolitik und #Corona-Wahn – alles haben #Merkel und ihre Regierung in den Sand gesetzt. Meine Generalabrechnung seht Ihr im Video: https://t.co/CKTKcvgd4W"
 ```
 
 If you speak some German, you can judge from face-validity that these
@@ -164,7 +167,7 @@ measurement are highly correlated:
 
 ``` r
 cor(tw_party$pop_ddr, tw_party$poppa_populism)
-#> [1] 0.8342808
+#> [1] 0.8376652
 ```
 
 ## Finding keywords

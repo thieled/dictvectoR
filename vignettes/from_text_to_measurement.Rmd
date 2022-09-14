@@ -116,7 +116,7 @@ Alternatively, you may consider using a pre-trained model from [here](https://gi
 
 The code below creates a local folder `ft_model` in your user home directory, and saves the model as two files: `ft_model.bin` and `ft_model.vec`.
 
-(Note: The code below only runs if the model file does not exists. The training algorithm does not create perfectly identical word vector models, which can cause problems when re-running the vignette.)
+(Note: To obtain a model that is reproducible every time we re-run the code below, we use only one core by setting `thread = 1`. To increase speed, you may want to use more threads.)
 
 ```{r train model, message=FALSE, results='hide'}
 # Create local folder and set name for model
@@ -125,14 +125,13 @@ model_file <- path.expand("~/ft_model/ft_model")
 
 # Train a fasttext model using the twitter data (if model does not yet exist)
 
-if (!file.exists(paste0(model_file, ".bin"))) {
 
   fastrtext::build_vectors(texts, model_file, modeltype = c("skipgram"),
                               dim = 150, epoch = 10, bucket = 1e+6,  lr = 0.05,
                               lrUpdateRate = 100, maxn = 7,  minn = 4, minCount = 3,
-                              t = 1e-04, thread = 8, ws= 6)
-  }
-
+                              t = 1e-04, thread = 1, ws= 6)
+ # }
+  
 ```
 
 Let's load the model and use a nearest-neighbor query to check if it works properly. 'Spahn' is the name of the former German minister of health:
@@ -242,6 +241,7 @@ tw_split <- tw_data %>% slice_sample(prop = .75)
 
 # tokenize
 toks <- quanteda::tokens(tw_split$text)
+
 ```
 
 `add_multiwords` adds multiword expressions for a dataframe of single words and counts the occurences. Here we only look for multiwords in a 2-word-window (`level = 1`), which can be increased to a 3-words window (`level = 2`). This process might take two or three minutes.  
@@ -254,7 +254,7 @@ top <- add_multiwords(top,
                       levels = 1)
 ```
 
-We want to narrow down this list again, filtering terms that occur only once. And we add a unique word_id by `add_word_id`.
+We want to narrow down this list again, dropping terms that occur only once. And we add a unique word_id by `add_word_id`.
 ```{r}
 top %<>% filter(hits > 1) 
 top %<>% add_word_id()
@@ -284,7 +284,7 @@ top_subs <- top %>% remove_similar_words(model,
                                         compare_by = "popF1",
                                         compare_hits = T, 
                                         min_simil = .6, 
-                                        win_threshold = .65) %>% 
+                                        win_threshold = .5) %>% 
                     filter(!from == "afd") 
 ```
 
@@ -307,27 +307,27 @@ From the 400 or so terms, we hand-picked five distinctive terms for each of thes
 ```{r hand-picked words}
 elites <- c(
 "altparteien", 
-"lobbyisten", 
-"merkel co", 
-"plänen bundesregierung", 
+"lobby", 
+"merkels groko", 
+"regierungsversagen", 
 "zwangsgebühr" 
 )
 
 people <- c(
-"arbeitnehmern",  
-"existenzen", 
-"deutschen", 
-"deutschen mittelstand", 
-"deutschen steuerzahler" 
+"arbeitnehmern",
+"deutschen steuerzahler",
+"existenzen vernichtet",
+"mittelstand",
+"volkes"
 )
 
 relation <- c(
-"entlarven", 
-"schamlos", 
-"verrückt",
-"wahn", 
-"steuergeldverschwendung" 
-)
+  "irrsinnige",
+  "entlarven",
+  "skandalösen",
+  "unfähig",
+  "realitätsfern"
+  )
 
 ```
 
@@ -424,9 +424,9 @@ dict  <- combis_df %>%
 dict
 ```
 
-These 10 words cover various aspects of populist communication and are highly context-specific. However, this is not the place to dive into theoretical discussions.
+These 10 words nicely cover various aspects of populist communication. However, this is not the place to dive into theoretical discussions.
 
-Let's check the performance of the dictionary instead. On the training sample, this dictionary reaches an F1 of .56, which is not great, but OK.
+Let's check the performance of the dictionary instead. On the training sample, this dictionary reaches an F1 of .55, which is not great, but OK.
 ```{r f1 on train}
 combis_df$F1 %>% max()  
 ```
@@ -436,11 +436,13 @@ Let's check the F1 score when applied on the test sample:
 # Performance for test_df
 get_F1(df_test, dict, model, 'pop')
 ```
-The short dictionary reaches a F1 of .55 in the test sample, which is almost par with the result for the train data. Drawing on this evaluation, we have some reason to assume that we avoided overfitting the dictionary to the training data. We may therefore assume that this measurement can at least approximately capture populist communication in our population dataset. It does not mean that this short dictionary would perform equally well in different contexts, e.g., in user-generated material, or in other timeframes.
+The short dictionary reaches a F1 of .48 in the test sample, which is a somewhat weaker performance than in the train data.
 
-For some special applications, you might be intereste how your DDR measurement perform for different subsets of your data, e.g., if you are using a translated corpus originating from various languages. F1 scores for grouped subsets of a text dataframe, can be obtained by `get_many_F1s_by_group`. 
+For a real application, this might be considered a too weak performance. Pathways to improve this performance are discussed in the concluding section. Please note that the purpose of this vignette is not to demonstrate the performance of the DDR approach, but to introduce the functions of the package which can be used to enhance this performance.
 
-In our case, we might be interested how the dictionaries perform for different political parties. Here, we demonstrate the function using the top 5% of short dictionaries. Since the populist communication in our annotated sample is indeed mainly concentrated in the parties AfD and Die Linke, we calculate the 3rd root of the product of the overall F1 score and the two party-specific F1-scores to pick the best performing, balanced dictionary:
+For some applications, you might be interested about how your DDR measurement performs in different subsets of your data, e.g., if you are using a translated corpus originating from various languages. F1 scores for grouped subsets of a text-dataframe, can be obtained by `get_many_F1s_by_group`. 
+
+In our example, we might be interested in finding a dictionary that performs well for predicting populist communication of different political parties. Here, we demonstrate the function using the top 5% of short dictionaries. We focus on the overall performance, and the performance in predicting populist communication for the right-wing and left-wing populist parties AfD and Die Linke. We calculate the 3rd root of the product of the overall F1 score and the two party-specific F1-scores to pick the best performing 'balanced' dictionary:
 ```{r f1 by group}
 combis_subset <- combis_df %>% filter_ntile("F1", .95)
 
@@ -466,19 +468,19 @@ Let's check the performance of this 'balanced' dictionary on the test data:
 ```{r f1 by group on test}
 get_F1(df_test, dict_bal, model, 'pop')
 ```
-As this decreased the performance in the test data, we stick with the dictionary picked before.
+This more balanced dictionary performs slightly better in the test sample. Also, it drops keywords that are more or less exclusively used by the right-wing AfD, like 'altparteien' (translated: 'old parties'). 
 
 ## Apply DDR
 
-Now, we want to apply the best performing dictionary to the datasets. We apply it on both, the population data `tw_data` and the annotated data `tw_annot`, using the core function of this package `cossim2dict`. We fill in missing values, which occure sometimes if text cleaning empties the text field by the mean minus 1 SD: 
+Having decided on a final dictionary, we want to apply this dictionary using the DDR method to the datasets. We apply it on both, the population data `tw_data` and the annotated data `tw_annot`, using the core function of this package `cossim2dict`. This function can also fill in missing values, which occur sometimes if text cleaning empties the text field. Here, we fill it by the mean minus 1 SD: 
 ```{r applying ddr}
 tw_annot$pop_ddr <- cossim2dict(df = tw_annot,
-                               dictionary = dict,
+                               dictionary = dict_bal,
                                model = model,
                                replace_na = 'mean-sd')
 
 tw_data$pop_ddr <- cossim2dict(df = tw_data,
-                               dictionary = dict,
+                               dictionary = dict_bal,
                                model = model,
                                replace_na = 'mean-sd')
 
@@ -486,16 +488,16 @@ tw_data$pop_ddr <- cossim2dict(df = tw_data,
 
 ## Face validity
 
-Now, lets inspect the top 3 populist Tweets in our population data:
+Now, lets inspect the top 6 populist Tweets in our population data:
 ```{r face validity 2}
-tw_data %>% arrange(desc(pop_ddr)) %>% pull(full_text) %>% head(3)
+tw_data %>% arrange(desc(pop_ddr)) %>% pull(full_text, party) %>% head()
 
 ```
-These examples include Tweets from the AfD directed against 'genderism' and leftist ideology, directed against the EU, and directed against climate politics. Judging from face validity these Tweets are clearly populist.
+These examples include Tweets from both populist parties 'AfD' and 'Die Linke'. Judging from face validity these Tweets seem clearly populist.
 
 Let's inspect the lower end of the spectrum:
 ```{r face validity}
-tw_data %>% arrange(desc(pop_ddr)) %>% pull(full_text) %>% tail(3)
+tw_data %>% arrange(desc(pop_ddr)) %>% pull(full_text, party) %>% tail(3)
 
 ```
 The least populist Tweets - according to our measurement here - include quite harmless "get well soon" wishes.
@@ -571,7 +573,7 @@ cor(tw_party$pop_ddr, tw_party$poppa_populism)
 
 ## Simple visual analysis
 
-The resulting DDR scores could be used, e.g. to investigate temporal shifts in the strategies of the political parties. Below we plot the mean populism score per party over time. We see that the 'AfD' clearly is the most populist party, followed by 'Die Linke', which is theoretically absolutely plausible. We not a sudden decrease of populist communication for 'Die Linke' and other parties in August 2020, which could be driven by the growth of a populist coronasceptic movement - which was opposed by all parties but the 'AfD'. At the end of the timeframe, shortly before the German General Elections in September 2021, the level of populism rises notably for the 'AfD'. 
+The resulting DDR scores could be used, e.g. to investigate temporal shifts in the strategies of the political parties. Below we plot the mean populism score per party over time. We see that the 'AfD' clearly is the most populist party, followed by 'Die Linke', which is theoretically plausible. We note a sudden decrease of populist communication for 'Die Linke' and other parties in August 2020, which could be driven by the growth of a populist coronasceptic movement - which was opposed by all parties but the 'AfD'. At the end of the timeframe, shortly before the German General Elections in September 2021, the level of populism rises notably for the 'AfD'. 
 
 ```{r simple visualization, fig.dim = c(7, 5), out.width = "75%", message=FALSE}
 tw_data %>%
