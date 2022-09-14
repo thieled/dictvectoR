@@ -86,7 +86,8 @@
 <img src="logo.png" class="logo" alt=""><h1 id="dictvector-">dictvectoR <a class="anchor" aria-label="anchor" href="#dictvector-"></a>
 </h1>
 </div>
-<!-- badges: start --><!-- badges: end --><p>dictvectoR implements the “Distributed Dictionary Representation” (DDR) Method (Garten et al., 2018).</p>
+<!-- badges: start -->
+<p>dictvectoR implements the “Distributed Dictionary Representation” (DDR) Method (Garten et al., 2018).</p>
 <p>The DDR uses a word vector representation of a dictionary, i.e. a list of words that reflect a theoretical concept, to calculate “a continuous measure of similarity between that concept and any other piece of text” [1].</p>
 <p>Word vectors, also called word embeddings, aim to represent semantic proximity of words in a vector space [2].</p>
 <p>This package uses fastText word vectors [3]. Average vector representations are computed for the concept dictionary and each document. The DDR score then is the cosine similarity between those vectors [1].</p>
@@ -153,9 +154,9 @@
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">pop_ddr</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">full_text</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Ob Deutschkurs oder Job - die Bilanz von \"geflüchteten\" #Frauen stellt sich nach fünf Jahren in #Deutschland ernüchternd dar. Merkels Fachkräfte-Märchen zerschellt krachend an der Realität - - der deutsche #Sozialstaat machts möglich! #AfD #Migration https://t.co/oTrP2ewkpv https://t.co/kr4PPh2a1z"</span></span>
-<span><span class="co">#&gt; [2] "#UNO finanziert #Islamisten-#Hass mit unserem #Steuergeld!\n\nSeit Jahrzehnten haben die Vereinten Nationen ein massives Problem mit #Islamismus und islamischem #Antisemitismus in den eigenen Reihen – und es wird nicht besser.\n\nhttps://t.co/G9MMaQrqIY https://t.co/fzjQ8Ty2qq"                       </span></span>
-<span><span class="co">#&gt; [3] "Seit es das #Grundgesetz gibt, hatte #Deutschland keinen Regierungschef, der deutsche Interessen so schlecht vertritt und den Ausverkauf des deutschen Volksvermögens und der Staatsfinanzen so schamlos betreibt, wie Angela #Merkel! #AfD #Corona #Covid19 https://t.co/qGKYUgqcSe"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "Ein Finanzminister #Scholz, der sein Land verkauft, hat im Kanzleramt nichts verloren. Nach #Merkel muss der Neuanfang folgen und zu dem gehört zuvörderst eine Finanzpolitik im Sinne 🇩🇪, ohne Schuldenunion und schwarzes Transferloch Richtung Brüssel! #AfD https://t.co/JWY4QwgPAS https://t.co/h58SWQcv0b"</span></span>
+<span><span class="co">#&gt; [2] "Korruption, Vetternwirtschaft, Geldgier, Amtsmissbrauch. Bei #Chebli, ihrem Mann Nizar Maarouf und deren “Clan“ ist alles dabei. Geld verdienen zulasten von Berlins Kranken. Man muss diesen schwarzen und rotrotgrünen Sumpf dringend trockenlegen. #Vivantes https://t.co/zKLd0HrVVE"                        </span></span>
+<span><span class="co">#&gt; [3] "Merkel macht Rechtsbruch zum politischen Prinzip! Die #GroKo glänzt durch Totalversagen. Von Wirtschaft über Klima und Justiz bis hin zu Flüchtlingspolitik und #Corona-Wahn – alles haben #Merkel und ihre Regierung in den Sand gesetzt. Meine Generalabrechnung seht Ihr im Video: https://t.co/CKTKcvgd4W"</span></span></code></pre></div>
 <p>If you speak some German, you can judge from face-validity that these top results appear quite plausible.</p>
 <p>Let’s have a quick look if this measurement can re-create scores from the POPPA expert survey, which rated parties along a contiuous score for populism. This score is already included in <code>tw_data</code>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -175,7 +176,7 @@
 <p>On this aggregate level, the expert survey rating and our ad-hoc DDR measurement are highly correlated:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">tw_party</span><span class="op">$</span><span class="va">pop_ddr</span>, <span class="va">tw_party</span><span class="op">$</span><span class="va">poppa_populism</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.8342808</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.8376652</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="finding-keywords">Finding keywords<a class="anchor" aria-label="anchor" href="#finding-keywords"></a>
@@ -233,7 +234,13 @@
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://zenodo.org/badge/latestdoi/438666102" class="external-link"><img src="https://zenodo.org/badge/438666102.svg" alt="DOI"></a></li>
+<li><a href="https://github.com/thieled/dictvectoR/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/thieled/dictvectoR/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+</ul>
+</div>
 
   </aside>
 </div>

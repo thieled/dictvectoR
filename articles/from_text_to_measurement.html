@@ -162,7 +162,7 @@
 <p>The downside of training your own model is that it is expensive regarding memory and computation. I used a machine with a CPU @ 1.80GHz processor with 8 cores and 16 GB RAM. If you run into memory limitations, consider decreasing <code>dim</code>, the number of dimensions. Decreasing the number of <code>epochs</code> will speed up the learing process, and decreasing the <code>bucket</code> size will reduce the size of the resulting model. For details, see Bojanowski et al. (2017). To obtain a model with better quality, you also should consider increasing the size of textual data used for training. The example here is limited by the size of data that can be feasibly shipped in a R-package.</p>
 <p>Alternatively, you may consider using a pre-trained model from <a href="https://github.com/facebookresearch/fastText/blob/master/docs/crawl-vectors.md" class="external-link">here</a>.</p>
 <p>The code below creates a local folder <code>ft_model</code> in your user home directory, and saves the model as two files: <code>ft_model.bin</code> and <code>ft_model.vec</code>.</p>
-<p>(Note: The code below only runs if the model file does not exists. The training algorithm does not create perfectly identical word vector models, which can cause problems when re-running the vignette.)</p>
+<p>(Note: To obtain a model that is reproducible every time we re-run the code below, we use only one core by setting <code>thread = 1</code>. To increase speed, you may want to use more threads.)</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create local folder and set name for model</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="st">"~/ft_model"</span>, showWarnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -170,13 +170,13 @@
 <span></span>
 <span><span class="co"># Train a fasttext model using the twitter data (if model does not yet exist)</span></span>
 <span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">model_file</span>, <span class="st">".bin"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span></span>
 <span>  <span class="fu">fastrtext</span><span class="fu">::</span><span class="fu"><a href="https://pommedeterresautee.github.io/fastrtext/reference/build_vectors.html" class="external-link">build_vectors</a></span><span class="op">(</span><span class="va">texts</span>, <span class="va">model_file</span>, modeltype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"skipgram"</span><span class="op">)</span>,</span>
 <span>                              dim <span class="op">=</span> <span class="fl">150</span>, epoch <span class="op">=</span> <span class="fl">10</span>, bucket <span class="op">=</span> <span class="fl">1e+6</span>,  lr <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>                              lrUpdateRate <span class="op">=</span> <span class="fl">100</span>, maxn <span class="op">=</span> <span class="fl">7</span>,  minn <span class="op">=</span> <span class="fl">4</span>, minCount <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>                              t <span class="op">=</span> <span class="fl">1e-04</span>, thread <span class="op">=</span> <span class="fl">8</span>, ws<span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
-<span>  <span class="op">}</span></span></code></pre></div>
+<span>                              t <span class="op">=</span> <span class="fl">1e-04</span>, thread <span class="op">=</span> <span class="fl">1</span>, ws<span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
+<span> <span class="co"># }</span></span>
+<span>  </span></code></pre></div>
 <p>Let’s load the model and use a nearest-neighbor query to check if it works properly. ‘Spahn’ is the name of the former German minister of health:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load model:</span></span>
@@ -185,10 +185,10 @@
 <span></span>
 <span><span class="co"># Nearest-neigbor query:</span></span>
 <span><span class="fu">fastrtext</span><span class="fu">::</span><span class="fu"><a href="https://pommedeterresautee.github.io/fastrtext/reference/get_nn.html" class="external-link">get_nn</a></span><span class="op">(</span><span class="va">model</span>, <span class="st">"spahn"</span>, k<span class="op">=</span><span class="fl">8</span><span class="op">)</span></span>
-<span><span class="co">#&gt;           spahns    spahnversagen             jens  spahnruecktritt </span></span>
-<span><span class="co">#&gt;        0.9217194        0.7766814        0.7709644        0.7349517 </span></span>
-<span><span class="co">#&gt;    maskenskandal     maskenaffäre personalnotstand          tönnies </span></span>
-<span><span class="co">#&gt;        0.7219898        0.6807356        0.6642620        0.6540389</span></span></code></pre></div>
+<span><span class="co">#&gt;          spahns            jens   spahnversagen spahnruecktritt    maskenaffäre </span></span>
+<span><span class="co">#&gt;       0.9231457       0.8296310       0.7667315       0.7490762       0.7094842 </span></span>
+<span><span class="co">#&gt;   maskenskandal        empfängt   ffpzweimasken </span></span>
+<span><span class="co">#&gt;       0.7067993       0.7042576       0.6780393</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="finding-keywords">Finding keywords<a class="anchor" aria-label="anchor" href="#finding-keywords"></a>
@@ -275,7 +275,7 @@
 <span><span class="co">#&gt; Joining, by = "from"</span></span>
 <span><span class="co">#&gt; [1] "Adding missing count of original words:"</span></span>
 <span><span class="co">#&gt; [1] "Counting word occurrences..."</span></span></code></pre></div>
-<p>We want to narrow down this list again, filtering terms that occur only once. And we add a unique word_id by <code>add_word_id</code>.</p>
+<p>We want to narrow down this list again, dropping terms that occur only once. And we add a unique word_id by <code>add_word_id</code>.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">top</span> <span class="op"><a href="../reference/compound.html">%&lt;&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">hits</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">)</span> </span>
 <span><span class="va">top</span> <span class="op"><a href="../reference/compound.html">%&lt;&gt;%</a></span> <span class="fu"><a href="../reference/add_word_id.html">add_word_id</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -302,7 +302,7 @@
 <span>                                        compare_by <span class="op">=</span> <span class="st">"popF1"</span>,</span>
 <span>                                        compare_hits <span class="op">=</span> <span class="cn">T</span>, </span>
 <span>                                        min_simil <span class="op">=</span> <span class="fl">.6</span>, </span>
-<span>                                        win_threshold <span class="op">=</span> <span class="fl">.65</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
+<span>                                        win_threshold <span class="op">=</span> <span class="fl">.5</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
 <span>                    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="va">from</span> <span class="op">==</span> <span class="st">"afd"</span><span class="op">)</span> </span>
 <span><span class="co">#&gt; Warning in .recacheSubclasses(def@className, def, env): undefined subclass</span></span>
 <span><span class="co">#&gt; "unpackedMatrix" of class "mMatrix"; definition not updated</span></span>
@@ -315,31 +315,23 @@
 <p>Let’s have a look at all terms found so far. (We won’t print all 400 or so terms here but only the top 50)</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">top_subs</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">popF1</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">words</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">50</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "panzer"                  "wahn"                   </span></span>
-<span><span class="co">#&gt;  [3] "deutschen steuerzahler"  "verrechnet"             </span></span>
-<span><span class="co">#&gt;  [5] "wand"                    "steuergeldverschwendung"</span></span>
-<span><span class="co">#&gt;  [7] "rücken wand"             "banken"                 </span></span>
-<span><span class="co">#&gt;  [9] "teures"                  "gaga"                   </span></span>
-<span><span class="co">#&gt; [11] "verrückt"                "gender gaga"            </span></span>
-<span><span class="co">#&gt; [13] "irrsinnige"              "vernichtet"             </span></span>
-<span><span class="co">#&gt; [15] "steuerzahler"            "mdb groko"              </span></span>
-<span><span class="co">#&gt; [17] "skandalösen"             "mdb nimmt"              </span></span>
-<span><span class="co">#&gt; [19] "igmetall"                "existenzen vernichtet"  </span></span>
-<span><span class="co">#&gt; [21] "maskenskandal"           "deckt"                  </span></span>
-<span><span class="co">#&gt; [23] "deutschen mittelstand"   "betreibt"               </span></span>
-<span><span class="co">#&gt; [25] "autofahrer"              "deutschland groko"      </span></span>
-<span><span class="co">#&gt; [27] "skandalöse"              "daimler vw"             </span></span>
-<span><span class="co">#&gt; [29] "schamlos"                "sondervermögen"         </span></span>
-<span><span class="co">#&gt; [31] "spahn warnt"             "lobbyregister"          </span></span>
-<span><span class="co">#&gt; [33] "gendergaga"              "vdk"                    </span></span>
-<span><span class="co">#&gt; [35] "vernichten"              "dax"                    </span></span>
-<span><span class="co">#&gt; [37] "staatshaushalt"          "deutsche steuerzahler"  </span></span>
-<span><span class="co">#&gt; [39] "merkels groko"           "finanzministerium"      </span></span>
-<span><span class="co">#&gt; [41] "knickt"                  "suizid"                 </span></span>
-<span><span class="co">#&gt; [43] "irrweg"                  "maut desaster"          </span></span>
-<span><span class="co">#&gt; [45] "gender"                  "steuergeldern"          </span></span>
-<span><span class="co">#&gt; [47] "skandalös"               "deckmantel"             </span></span>
-<span><span class="co">#&gt; [49] "entlarven"               "ganzer linie"</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] "panzer"                 "örr"                    "verrechnet"            </span></span>
+<span><span class="co">#&gt;  [4] "örr zwangsgebühr"       "deutschen steuerzahler" "existenzen vernichtet" </span></span>
+<span><span class="co">#&gt;  [7] "wand"                   "autofahrer"             "gaga"                  </span></span>
+<span><span class="co">#&gt; [10] "wahn"                   "irrsinnige"             "rücken wand"           </span></span>
+<span><span class="co">#&gt; [13] "irrweg"                 "vernichtet"             "rechnet"               </span></span>
+<span><span class="co">#&gt; [16] "bargeld"                "merkels groko"          "kette"                 </span></span>
+<span><span class="co">#&gt; [19] "lobbyregister"          "vdk"                    "deckmantel"            </span></span>
+<span><span class="co">#&gt; [22] "mdb groko"              "gender gaga"            "deckt"                 </span></span>
+<span><span class="co">#&gt; [25] "autofahren"             "diesel benziner"        "groko plant"           </span></span>
+<span><span class="co">#&gt; [28] "entlarven"              "steuerzahler"           "teure"                 </span></span>
+<span><span class="co">#&gt; [31] "abgasnorm"              "benziner"               "daimler vw"            </span></span>
+<span><span class="co">#&gt; [34] "palmöl"                 "seehofer rechnet"       "kleinrechnen"          </span></span>
+<span><span class="co">#&gt; [37] "deutschen mittelstand"  "groko importiert"       "skandalösen"           </span></span>
+<span><span class="co">#&gt; [40] "betreiber"              "mdb nimmt"              "spahn warnt"           </span></span>
+<span><span class="co">#&gt; [43] "unfähig"                "deutsche steuerzahler"  "todesstoß"             </span></span>
+<span><span class="co">#&gt; [46] "zwangsgebühr"           "teures"                 "verrückt"              </span></span>
+<span><span class="co">#&gt; [49] "geld deutschen"         "steuergelder"</span></span></code></pre></div>
 <p>This list of keywors is still quite long. It includes many terms that seem theoretically plausible, but also many words that obviously are either too specific, or seem out of place.</p>
 <p>Since the next steps involve combinatorics for finding a good combination of keywords, we want to narrow down the list of words as drastically as possible.</p>
 <p>For theoretical reasons, we decided to group the found words in three categories that reflect different aspects of populist communication: Terms that reflect ‘elites’, terms that reflect ‘the people’, and words that relate those two groups.</p>
@@ -347,27 +339,27 @@
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">elites</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span><span class="st">"altparteien"</span>, </span>
-<span><span class="st">"lobbyisten"</span>, </span>
-<span><span class="st">"merkel co"</span>, </span>
-<span><span class="st">"plänen bundesregierung"</span>, </span>
+<span><span class="st">"lobby"</span>, </span>
+<span><span class="st">"merkels groko"</span>, </span>
+<span><span class="st">"regierungsversagen"</span>, </span>
 <span><span class="st">"zwangsgebühr"</span> </span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">people</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span><span class="st">"arbeitnehmern"</span>,  </span>
-<span><span class="st">"existenzen"</span>, </span>
-<span><span class="st">"deutschen"</span>, </span>
-<span><span class="st">"deutschen mittelstand"</span>, </span>
-<span><span class="st">"deutschen steuerzahler"</span> </span>
+<span><span class="st">"arbeitnehmern"</span>,</span>
+<span><span class="st">"deutschen steuerzahler"</span>,</span>
+<span><span class="st">"existenzen vernichtet"</span>,</span>
+<span><span class="st">"mittelstand"</span>,</span>
+<span><span class="st">"volkes"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">relation</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span><span class="st">"entlarven"</span>, </span>
-<span><span class="st">"schamlos"</span>, </span>
-<span><span class="st">"verrückt"</span>,</span>
-<span><span class="st">"wahn"</span>, </span>
-<span><span class="st">"steuergeldverschwendung"</span> </span>
-<span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="st">"irrsinnige"</span>,</span>
+<span>  <span class="st">"entlarven"</span>,</span>
+<span>  <span class="st">"skandalösen"</span>,</span>
+<span>  <span class="st">"unfähig"</span>,</span>
+<span>  <span class="st">"realitätsfern"</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
 <p>We use this hand-picked list of words to create a shortlist and add a variable that indicates the category:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">top_elites</span> <span class="op">&lt;-</span> <span class="va">top_subs</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">words</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">elites</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>cat <span class="op">=</span> <span class="st">"elites"</span><span class="op">)</span></span>
@@ -378,7 +370,7 @@
 <span><span class="va">shortlist</span><span class="op">$</span><span class="va">cat</span> <span class="op"><a href="../reference/compound.html">%&lt;&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="op">)</span> </span>
 <span><span class="va">shortlist</span><span class="op">$</span><span class="va">cat</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   elites   people relation </span></span>
-<span><span class="co">#&gt;        5        4        5</span></span></code></pre></div>
+<span><span class="co">#&gt;        5        5        5</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="get-combinations">Get combinations<a class="anchor" aria-label="anchor" href="#get-combinations"></a>
@@ -446,23 +438,23 @@
 <span></span>
 <span><span class="co"># Let's see:</span></span>
 <span><span class="va">dict</span></span>
-<span><span class="co">#&gt;  [1] "deutschen"              "deutschen mittelstand"  "entlarven"             </span></span>
-<span><span class="co">#&gt;  [4] "existenzen"             "lobbyisten"             "merkel co"             </span></span>
-<span><span class="co">#&gt;  [7] "plänen bundesregierung" "schamlos"               "verrückt"              </span></span>
-<span><span class="co">#&gt; [10] "zwangsgebühr"</span></span></code></pre></div>
-<p>These 10 words cover various aspects of populist communication and are highly context-specific. However, this is not the place to dive into theoretical discussions.</p>
-<p>Let’s check the performance of the dictionary instead. On the training sample, this dictionary reaches an F1 of .56, which is not great, but OK.</p>
+<span><span class="co">#&gt; [1] "altparteien"            "deutschen steuerzahler" "existenzen vernichtet" </span></span>
+<span><span class="co">#&gt; [4] "irrsinnige"             "mittelstand"            "regierungsversagen"    </span></span>
+<span><span class="co">#&gt; [7] "skandalösen"            "unfähig"                "zwangsgebühr"</span></span></code></pre></div>
+<p>These 10 words nicely cover various aspects of populist communication. However, this is not the place to dive into theoretical discussions.</p>
+<p>Let’s check the performance of the dictionary instead. On the training sample, this dictionary reaches an F1 of .55, which is not great, but OK.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">combis_df</span><span class="op">$</span><span class="va">F1</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="op">)</span>  </span>
-<span><span class="co">#&gt; [1] 0.5625</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.5490196</span></span></code></pre></div>
 <p>Let’s check the F1 score when applied on the test sample:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Performance for test_df</span></span>
 <span><span class="fu"><a href="../reference/get_F1.html">get_F1</a></span><span class="op">(</span><span class="va">df_test</span>, <span class="va">dict</span>, <span class="va">model</span>, <span class="st">'pop'</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.4897959</span></span></code></pre></div>
-<p>The short dictionary reaches a F1 of .55 in the test sample, which is almost par with the result for the train data. Drawing on this evaluation, we have some reason to assume that we avoided overfitting the dictionary to the training data. We may therefore assume that this measurement can at least approximately capture populist communication in our population dataset. It does not mean that this short dictionary would perform equally well in different contexts, e.g., in user-generated material, or in other timeframes.</p>
-<p>For some special applications, you might be intereste how your DDR measurement perform for different subsets of your data, e.g., if you are using a translated corpus originating from various languages. F1 scores for grouped subsets of a text dataframe, can be obtained by <code>get_many_F1s_by_group</code>.</p>
-<p>In our case, we might be interested how the dictionaries perform for different political parties. Here, we demonstrate the function using the top 5% of short dictionaries. Since the populist communication in our annotated sample is indeed mainly concentrated in the parties AfD and Die Linke, we calculate the 3rd root of the product of the overall F1 score and the two party-specific F1-scores to pick the best performing, balanced dictionary:</p>
+<span><span class="co">#&gt; [1] 0.4791667</span></span></code></pre></div>
+<p>The short dictionary reaches a F1 of .48 in the test sample, which is a somewhat weaker performance than in the train data.</p>
+<p>For a real application, this might be considered a too weak performance. Pathways to improve this performance are discussed in the concluding section. Please note that the purpose of this vignette is not to demonstrate the performance of the DDR approach, but to introduce the functions of the package which can be used to enhance this performance.</p>
+<p>For some applications, you might be interested about how your DDR measurement performs in different subsets of your data, e.g., if you are using a translated corpus originating from various languages. F1 scores for grouped subsets of a text-dataframe, can be obtained by <code>get_many_F1s_by_group</code>.</p>
+<p>In our example, we might be interested in finding a dictionary that performs well for predicting populist communication of different political parties. Here, we demonstrate the function using the top 5% of short dictionaries. We focus on the overall performance, and the performance in predicting populist communication for the right-wing and left-wing populist parties AfD and Die Linke. We calculate the 3rd root of the product of the overall F1 score and the two party-specific F1-scores to pick the best performing ‘balanced’ dictionary:</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">combis_subset</span> <span class="op">&lt;-</span> <span class="va">combis_df</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="../reference/filter_ntile.html">filter_ntile</a></span><span class="op">(</span><span class="st">"F1"</span>, <span class="fl">.95</span><span class="op">)</span></span>
 <span></span>
@@ -483,48 +475,59 @@
 <span>                        <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">dict_bal</span></span>
-<span><span class="co">#&gt; [1] "altparteien"             "deutschen mittelstand"  </span></span>
-<span><span class="co">#&gt; [3] "deutschen steuerzahler"  "existenzen"             </span></span>
-<span><span class="co">#&gt; [5] "lobbyisten"              "plänen bundesregierung" </span></span>
-<span><span class="co">#&gt; [7] "steuergeldverschwendung" "verrückt"               </span></span>
-<span><span class="co">#&gt; [9] "wahn"</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] "arbeitnehmern"          "deutschen steuerzahler" "existenzen vernichtet" </span></span>
+<span><span class="co">#&gt;  [4] "lobby"                  "merkels groko"          "mittelstand"           </span></span>
+<span><span class="co">#&gt;  [7] "realitätsfern"          "skandalösen"            "unfähig"               </span></span>
+<span><span class="co">#&gt; [10] "zwangsgebühr"</span></span></code></pre></div>
 <p>Let’s check the performance of this ‘balanced’ dictionary on the test data:</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_F1.html">get_F1</a></span><span class="op">(</span><span class="va">df_test</span>, <span class="va">dict_bal</span>, <span class="va">model</span>, <span class="st">'pop'</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.5</span></span></code></pre></div>
-<p>As this decreased the performance in the test data, we stick with the dictionary picked before.</p>
+<span><span class="co">#&gt; [1] 0.4948454</span></span></code></pre></div>
+<p>This more balanced dictionary performs slightly better in the test sample. Also, it drops keywords that are more or less exclusively used by the right-wing AfD, like ‘altparteien’ (translated: ‘old parties’).</p>
 </div>
 <div class="section level2">
 <h2 id="apply-ddr">Apply DDR<a class="anchor" aria-label="anchor" href="#apply-ddr"></a>
 </h2>
-<p>Now, we want to apply the best performing dictionary to the datasets. We apply it on both, the population data <code>tw_data</code> and the annotated data <code>tw_annot</code>, using the core function of this package <code>cossim2dict</code>. We fill in missing values, which occure sometimes if text cleaning empties the text field by the mean minus 1 SD:</p>
+<p>Having decided on a final dictionary, we want to apply this dictionary using the DDR method to the datasets. We apply it on both, the population data <code>tw_data</code> and the annotated data <code>tw_annot</code>, using the core function of this package <code>cossim2dict</code>. This function can also fill in missing values, which occur sometimes if text cleaning empties the text field. Here, we fill it by the mean minus 1 SD:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tw_annot</span><span class="op">$</span><span class="va">pop_ddr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cossim2dict.html">cossim2dict</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">tw_annot</span>,</span>
-<span>                               dictionary <span class="op">=</span> <span class="va">dict</span>,</span>
+<span>                               dictionary <span class="op">=</span> <span class="va">dict_bal</span>,</span>
 <span>                               model <span class="op">=</span> <span class="va">model</span>,</span>
 <span>                               replace_na <span class="op">=</span> <span class="st">'mean-sd'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">tw_data</span><span class="op">$</span><span class="va">pop_ddr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cossim2dict.html">cossim2dict</a></span><span class="op">(</span>df <span class="op">=</span> <span class="va">tw_data</span>,</span>
-<span>                               dictionary <span class="op">=</span> <span class="va">dict</span>,</span>
+<span>                               dictionary <span class="op">=</span> <span class="va">dict_bal</span>,</span>
 <span>                               model <span class="op">=</span> <span class="va">model</span>,</span>
 <span>                               replace_na <span class="op">=</span> <span class="st">'mean-sd'</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="face-validity">Face validity<a class="anchor" aria-label="anchor" href="#face-validity"></a>
 </h2>
-<p>Now, lets inspect the top 3 populist Tweets in our population data:</p>
+<p>Now, lets inspect the top 6 populist Tweets in our population data:</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tw_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">pop_ddr</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">full_text</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "#AfD-Fraktionsvize @PeterFelser hat den linksideologischen Hype um neue Geschlechter als „teures #Gendergaga“ kritisiert: \"Riesen Aufwand für Nichts! Gender-Gaga auf Kosten der #Steuerzahler ersatzlos streichen!\" #Bundestag https://t.co/paIVvtTkfg"                                     </span></span>
-<span><span class="co">#&gt; [2] "Seit es das #Grundgesetz gibt, hatte #Deutschland keinen Regierungschef, der deutsche Interessen so schlecht vertritt und den Ausverkauf des deutschen Volksvermögens und der Staatsfinanzen so schamlos betreibt, wie Angela #Merkel! #AfD #Corona #Covid19 https://t.co/qGKYUgqcSe"          </span></span>
-<span><span class="co">#&gt; [3] "Entwicklungsminister Gerd Müller &amp;amp; Arbeitsminister @hubertus_heil wollen ein Lieferkettengesetz durchsetzen, das eine nahezu unbegrenzte Haftungsausweitung für 🇩🇪 Unternehmen vorsieht. @Frohnmaier_AfD: \"Schlussstrich unter Lieferketten-Irrsinn ziehen\" #AfD https://t.co/mW9wvDrFaI"</span></span></code></pre></div>
-<p>These examples include Tweets from the AfD directed against ‘genderism’ and leftist ideology, directed against the EU, and directed against climate politics. Judging from face validity these Tweets are clearly populist.</p>
+<code class="sourceCode R"><span><span class="va">tw_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">pop_ddr</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">full_text</span>, <span class="va">party</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                                                                                                                                                                                                                                                                                              Linke </span></span>
+<span><span class="co">#&gt;     "#Scheuer ist als Minister unfähig &amp;amp; untragbar! Vom PKW-Maut-Desaster über ÖPP-Straßenprojekte bis zur Autobahn GmbH: Wie lange will #Merkel noch zusehen, wie unser Steuergeld für private Beratungsfirmen, Investoren und überbezahlte Manager veruntreut wird? https://t.co/4x0a2UhuIh" </span></span>
+<span><span class="co">#&gt;                                                                                                                                                                                                                                                                                              Linke </span></span>
+<span><span class="co">#&gt; "Grotesk: #Lufthansa-Führung erpresst Beschäftigte mit Stellenabbau &amp;amp; betreibt weiter Tochterunternehmen in Steueroasen. Ohne Einfluss auf Geschäftspolitik entpuppen sich #BuReg-Staatshilfen so zT als Subvention zukünftiger Profite &amp;amp; Verrat an Arbeitnehmern https://t.co/inARCu6Sqo" </span></span>
+<span><span class="co">#&gt;                                                                                                                                                                                                                                                                                              Linke </span></span>
+<span><span class="co">#&gt;        "#DAX-Konzerne machen so viel #Gewinn wie nur zuvor und vernichten Arbeitsplätze in großem Stil. Warum nur haben #Altmaier &amp;amp; #Scholz üppige Rettungsmilliarden an Konzerne verteilt ohne dies an die Auflage zu knüpfen, dass Arbeitsplätze gesichert werden?\nhttps://t.co/lCAMzKRbBj" </span></span>
+<span><span class="co">#&gt;                                                                                                                                                                                                                                                                                                AfD </span></span>
+<span><span class="co">#&gt;   "Entwicklungsminister Gerd Müller &amp;amp; Arbeitsminister @hubertus_heil wollen ein Lieferkettengesetz durchsetzen, das eine nahezu unbegrenzte Haftungsausweitung für 🇩🇪 Unternehmen vorsieht. @Frohnmaier_AfD: \"Schlussstrich unter Lieferketten-Irrsinn ziehen\" #AfD https://t.co/mW9wvDrFaI" </span></span>
+<span><span class="co">#&gt;                                                                                                                                                                                                                                                                                                AfD </span></span>
+<span><span class="co">#&gt;                                        "#AfD-Fraktionsvize @PeterFelser hat den linksideologischen Hype um neue Geschlechter als „teures #Gendergaga“ kritisiert: \"Riesen Aufwand für Nichts! Gender-Gaga auf Kosten der #Steuerzahler ersatzlos streichen!\" #Bundestag https://t.co/paIVvtTkfg" </span></span>
+<span><span class="co">#&gt;                                                                                                                                                                                                                                                                                                AfD </span></span>
+<span><span class="co">#&gt;                           "Franziska #Giffey will Hilfen aus dem #Konjunkturpaket nur an Unternehmen zahleen, die ‚Frauenquoten‘ erfüllen. Dazu @M_Reichardt_AfD: \"Wenig für Familien – Milliarden für ideologische Projekte!\" #Corona #Bundesregierung #Bundestag #AfD https://t.co/SJkeKpMN2f"</span></span></code></pre></div>
+<p>These examples include Tweets from both populist parties ‘AfD’ and ‘Die Linke’. Judging from face validity these Tweets seem clearly populist.</p>
 <p>Let’s inspect the lower end of the spectrum:</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tw_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">pop_ddr</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">full_text</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "@ralphruthe @marga_owski Gute Besserung!"                      </span></span>
-<span><span class="co">#&gt; [2] "@BelaAnda1 @walli5 @PolyPepper Ohne Diblom glaub‘ ich des ned."</span></span>
-<span><span class="co">#&gt; [3] "@grischdjane @doktordab @MarkusBlume So ein Käse Käse ;-)"</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">tw_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">pop_ddr</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">full_text</span>, <span class="va">party</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                                                                                                                                                                                                                                            CSU </span></span>
+<span><span class="co">#&gt; "@KristinaFassler @KenzaAbbou @KaiDiekmann @katha_krentz @lukizzl @SophiaRoediger @TijenOnaran @cihansugur @anja_hendel @esinekalos @froileinmueller @biancareitz_ @wohlrapp @pmk997 @swissmadame @ChrisBoesenberg Gute Besserung ❤️‍\U{01fa79}" </span></span>
+<span><span class="co">#&gt;                                                                                                                                                                                                                                       B90Grune </span></span>
+<span><span class="co">#&gt;                                                                                                                                                                                                     "@ralphruthe @marga_owski Gute Besserung!" </span></span>
+<span><span class="co">#&gt;                                                                                                                                                                                                                                            CSU </span></span>
+<span><span class="co">#&gt;                                                                                                                                                                                    "@grischdjane @doktordab @MarkusBlume So ein Käse Käse ;-)"</span></span></code></pre></div>
 <p>The least populist Tweets - according to our measurement here - include quite harmless “get well soon” wishes.</p>
 </div>
 <div class="section level2">
@@ -560,7 +563,7 @@
 <p>The two (semi-)continuous scores have a Pearson’s r correlation of .53:</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">parallel_df</span><span class="op">$</span><span class="va">pop_cum</span>, <span class="va">parallel_df</span><span class="op">$</span><span class="va">pop_ddr</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.5308004</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.521855</span></span></code></pre></div>
 <p>Finally, to assess external validity of our measurement, we compare it on a aggregated level to the POPPA expert rating of political parties (Meijers and Zaslove, 2020). This expert survey provides a gradual rating of populism for political parties. The score is already merged to the <code>tw_data</code>.</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># aggregate on party level</span></span>
@@ -579,12 +582,12 @@
 <p>Indeed, both scores are strongly correlated:</p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">tw_party</span><span class="op">$</span><span class="va">pop_ddr</span>, <span class="va">tw_party</span><span class="op">$</span><span class="va">poppa_populism</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.87111</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.8667536</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="simple-visual-analysis">Simple visual analysis<a class="anchor" aria-label="anchor" href="#simple-visual-analysis"></a>
 </h2>
-<p>The resulting DDR scores could be used, e.g. to investigate temporal shifts in the strategies of the political parties. Below we plot the mean populism score per party over time. We see that the ‘AfD’ clearly is the most populist party, followed by ‘Die Linke’, which is theoretically absolutely plausible. We not a sudden decrease of populist communication for ‘Die Linke’ and other parties in August 2020, which could be driven by the growth of a populist coronasceptic movement - which was opposed by all parties but the ‘AfD’. At the end of the timeframe, shortly before the German General Elections in September 2021, the level of populism rises notably for the ‘AfD’.</p>
+<p>The resulting DDR scores could be used, e.g. to investigate temporal shifts in the strategies of the political parties. Below we plot the mean populism score per party over time. We see that the ‘AfD’ clearly is the most populist party, followed by ‘Die Linke’, which is theoretically plausible. We note a sudden decrease of populist communication for ‘Die Linke’ and other parties in August 2020, which could be driven by the growth of a populist coronasceptic movement - which was opposed by all parties but the ‘AfD’. At the end of the timeframe, shortly before the German General Elections in September 2021, the level of populism rises notably for the ‘AfD’.</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tw_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>day <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">created_at</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> </span>
