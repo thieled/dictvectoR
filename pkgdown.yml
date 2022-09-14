@@ -3,7 +3,7 @@ pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
   from_text_to_measurement: from_text_to_measurement.html
-last_built: 2022-09-14T17:42Z
+last_built: 2022-09-14T18:29Z
 urls:
   reference: https://thieled.github.io/dictvectoR/reference
   article: https://thieled.github.io/dictvectoR/articles

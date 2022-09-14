@@ -95,40 +95,40 @@ string of numbers that uniquely identify all rows in the data.frame.</p>
 <span class="r-in"><span><span class="va">t3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">letters</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">add_word_id</span><span class="op">(</span><span class="va">t1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    a word_id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  b       1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  k       2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  w       3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  r       4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  x       5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  l       6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  v       7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  q       8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  m       9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 j      10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  i       1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  l       2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  p       3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  m       4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  b       5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  q       6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  k       7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  v       8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  n       9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 r      10</span>
 <span class="r-in"><span><span class="fu">add_word_id</span><span class="op">(</span><span class="va">t2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    id word_id a</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1      01 a</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   1      02 y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   1      03 f</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   1      04 u</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   1      05 d</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   1      06 n</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   1      07 p</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   1      08 b</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   1      09 j</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  1      10 o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1      01 j</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   1      02 s</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   1      03 n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   1      04 o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   1      05 m</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   1      06 z</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   1      07 d</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   1      08 l</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   1      09 c</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  1      10 a</span>
 <span class="r-in"><span><span class="fu">add_word_id</span><span class="op">(</span><span class="va">t3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    a word_id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  o      01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  l      02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  b      03</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  a      04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  k      05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  c      06</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  q      07</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  x      08</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  m      09</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 d      10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  u      01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  k      02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  r      03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  g      04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  h      05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  t      06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  i      07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  v      08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  e      09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 c      10</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

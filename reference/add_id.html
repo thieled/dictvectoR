@@ -95,40 +95,40 @@ a string of numbers that uniquely identify all rows in the data.frame.</p>
 <span class="r-in"><span><span class="va">t3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">letters</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">add_id</span><span class="op">(</span><span class="va">t1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    id a</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1 t</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2 g</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3 j</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4 o</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5 b</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   6 h</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   7 w</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   8 k</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   9 m</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 10 y</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1 f</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2 a</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3 u</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4 j</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5 g</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   6 d</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   7 i</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   8 e</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   9 q</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 10 b</span>
 <span class="r-in"><span><span class="fu">add_id</span><span class="op">(</span><span class="va">t2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    id a</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  01 v</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  02 y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  03 m</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  04 e</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  05 a</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  06 x</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  07 u</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  08 p</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  09 w</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 10 k</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  01 h</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  02 t</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  03 a</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  04 o</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  05 p</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  06 l</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  07 e</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  08 k</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  09 c</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 10 x</span>
 <span class="r-in"><span><span class="fu">add_id</span><span class="op">(</span><span class="va">t3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    a id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  q 01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  k 02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  h 03</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  d 04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  p 05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  e 06</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  l 07</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  g 08</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  m 09</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 v 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  s 01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  j 02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  q 03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  r 04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  f 05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  g 06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  b 07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  p 08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  l 09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 c 10</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
